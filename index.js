@@ -24,40 +24,33 @@ function countRequests(req, res, next) {
   return next();
 }
 
-server.post('/projects', countRequests, (req, res) => {
+//Middleware global
+server.use(countRequests);
+
+server.post('/projects', (req, res) => {
   const { id, title } = req.body;
   projects.push({ id, title, tasks: [] });
   res.json(projects);
 });
 
-server.get('/projects', countRequests, (req, res) => {
+server.get('/projects', (req, res) => {
   res.json(projects);
 });
 
-server.put('/projects/:id', countRequests, checkProjectExists, (req, res) => {
+server.put('/projects/:id', checkProjectExists, (req, res) => {
   const { title } = req.body;
   projects[req.project_index].title = title;
   res.json(projects);
 });
 
-server.delete(
-  '/projects/:id',
-  countRequests,
-  checkProjectExists,
-  (req, res) => {
-    users.splice(req.project_index, 1);
-    return res.send();
-  }
-);
-server.post(
-  '/projects/:id/tasks',
-  countRequests,
-  checkProjectExists,
-  (req, res) => {
-    const { title } = req.body;
-    projects[req.project_index].tasks.push(title);
-    res.json(projects);
-  }
-);
+server.delete('/projects/:id', checkProjectExists, (req, res) => {
+  users.splice(req.project_index, 1);
+  return res.send();
+});
+server.post('/projects/:id/tasks', checkProjectExists, (req, res) => {
+  const { title } = req.body;
+  projects[req.project_index].tasks.push(title);
+  res.json(projects);
+});
 
 server.listen(3000);
