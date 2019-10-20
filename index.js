@@ -29,8 +29,9 @@ server.use(countRequests);
 
 server.post('/projects', (req, res) => {
   const { id, title } = req.body;
-  projects.push({ id, title, tasks: [] });
-  res.json(projects);
+  const project = { id, title, tasks: [] };
+  projects.push(project);
+  res.json(project);
 });
 
 server.get('/projects', (req, res) => {
